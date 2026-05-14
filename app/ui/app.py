@@ -35,6 +35,7 @@ from app.services.export import ExportResult, export_session, session_acquisitio
 from app.services.user_settings import save_user_settings
 from app.services.units import format_reading_with_unit
 from app.ui.settings import SettingsPanel
+from app.ui.toast import play_timer_finished_chime, show_toast
 
 _MAX_STATUS_EVENTS_PER_TICK = 120
 _MAX_READINGS_PER_TICK = 400
@@ -83,6 +84,8 @@ class MainWindow:
         self.dyno_values: deque[float] = deque(maxlen=config.chart_window_seconds * 10)
         self._session_start: Optional[float] = None
         self._session_deadline: Optional[float] = None
+        # Duração programada (s) quando acquisition_duration_seconds > 0; limpo em stop().
+        self._session_timer_seconds: Optional[float] = None
         self._last_stats_wall: float = 0.0
         self._prev_dmm_ok = 0
         self._prev_dyno_ok = 0
@@ -455,9 +458,11 @@ class MainWindow:
         tlim = float(self.config.acquisition_duration_seconds)
         if tlim > 0.0:
             self._session_deadline = self._session_start + tlim
+            self._session_timer_seconds = float(tlim)
             self._append_log(f"Duracao maxima da sessao: {tlim:g} s (paragem automatica ao fim do tempo).")
         else:
             self._session_deadline = None
+            self._session_timer_seconds = None
         self.session_csv_id = datetime.now().strftime("%Y-%m-%d_%H%M%S")
         self.csv_dropped = 0
         self._dmm_ok_samples = 0
@@ -495,6 +500,7 @@ class MainWindow:
             self.supervisor = None
         self.running = False
         self._session_deadline = None
+        self._session_timer_seconds = None
         self.btn_start.configure(state="normal")
         self.btn_stop.configure(state="disabled")
         self.settings_panel.set_enabled(True)
@@ -780,8 +786,19 @@ class MainWindow:
 
         if self.running and self._session_deadline is not None:
             if time.monotonic() >= self._session_deadline:
+                planned = float(self._session_timer_seconds or 0.0)
                 self._append_log("Aquisicao: tempo maximo da sessao atingido — paragem automatica.")
+                play_timer_finished_chime()
+                toast_msg = (
+                    f"A amostragem terminou após {planned:g} s."
+                    if planned > 0.0
+                    else "A amostragem terminou (tempo programado)."
+                )
                 self.stop()
+                self.root.after(
+                    80,
+                    lambda m=toast_msg: show_toast(self.root, "EasyAcq — Tempo de aquisição", m),
+                )
 
         if reschedule and self.running:
             self.root.after(0, self._poll_events)

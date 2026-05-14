@@ -9,7 +9,7 @@
 ;   descomente SignTool / SignedUninstaller abaixo ou passe /DSIGN_RELEASE ao ISCC.
 
 #define MyAppName "EasyAcq"
-#define MyAppVersion "0.2.3"
+#define MyAppVersion "0.2.4"
 #define MyAppPublisher "EasyAcq"
 #define MyAppExeName "EasyAcq.exe"
 #define DistDir "..\\dist\\EasyAcq"
