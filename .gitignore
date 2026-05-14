@@ -16,8 +16,8 @@ build/
 release/
 EasyAcq.lnk
 
-# Logs locais (não versionar)
-logs/
+# Dados e definicoes locais (CSV, user_settings)
+data/
 
 # Tests / tools
 .pytest_cache/
