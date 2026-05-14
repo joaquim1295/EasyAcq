@@ -1,2 +1,3 @@
 # Build-time only (PyInstaller + Windows installer compile).
 pyinstaller==6.14.1
+pillow>=10.2.0

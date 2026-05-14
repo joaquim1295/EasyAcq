@@ -47,6 +47,9 @@ jobs:
           choco install innosetup -y --no-progress
           if ($LASTEXITCODE -ne 0) { throw "choco install innosetup falhou com codigo $LASTEXITCODE" }
 
+      - name: Imagens BMP do assistente Inno
+        run: python scripts/render_inno_wizard_bitmaps.py
+
       - name: Compile installer
         shell: pwsh
         run: |

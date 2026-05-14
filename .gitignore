@@ -15,6 +15,9 @@ build/
 *.spec.local
 release/
 EasyAcq.lnk
+# Gerados por scripts/render_inno_wizard_bitmaps.py antes do Inno
+assets/setup_wizard_large.bmp
+assets/setup_wizard_small.bmp
 
 # Dados e definicoes locais (CSV, user_settings)
 data/

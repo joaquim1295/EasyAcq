@@ -78,6 +78,9 @@ Write-Host "       Ou use o atalho EasyAcq.lnk na raiz do projeto." -ForegroundC
 Write-Host ""
 
 if ($Installer) {
+    Write-Host "Gerando imagens BMP do assistente Inno (icon)..." -ForegroundColor Cyan
+    & $pyExe (Join-Path $root "scripts\render_inno_wizard_bitmaps.py")
+    if ($LASTEXITCODE -ne 0) { throw "render_inno_wizard_bitmaps.py terminou com codigo $LASTEXITCODE" }
     $candidates = @(
         "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
         "$env:ProgramFiles\Inno Setup 6\ISCC.exe"

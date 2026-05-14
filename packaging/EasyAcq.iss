@@ -1,7 +1,12 @@
 ; Inno Setup 6 — gera instalador a partir de dist\EasyAcq (apos PyInstaller).
 ; Instalacao por utilizador (sem admin): %LocalAppData%\Programs\EasyAcq
 ; Compilar: "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging\EasyAcq.iss
-; (ou scripts\build_release.ps1 -Installer)
+; (ou scripts\build_release.ps1 -Installer, que gera os BMP do assistente antes do ISCC)
+;
+; Assinatura Authenticode (SmartScreen / «Editor desconhecido»):
+;   Nao e possivel «tornar legitimo» sem certificado de assinatura de codigo (CA comercial
+;   ou fornecedor interno). Ver docs\code_signing.md e, apos configurar signtool + cert,
+;   descomente SignTool / SignedUninstaller abaixo ou passe /DSIGN_RELEASE ao ISCC.
 
 #define MyAppName "EasyAcq"
 #define MyAppVersion "0.2.2"
@@ -24,10 +29,15 @@ PrivilegesRequired=lowest
 OutputDir=..\release
 OutputBaseFilename=EasyAcq_Setup_{#MyAppVersion}
 SetupIconFile={#MyIcon}
+; Icone do ficheiro Setup.exe e imagens do assistente (geradas por scripts\render_inno_wizard_bitmaps.py)
+WizardImageFile=..\assets\setup_wizard_large.bmp
+WizardSmallImageFile=..\assets\setup_wizard_small.bmp
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+; Assinatura Authenticode: ver comentarios no topo e docs\code_signing.md
+; (SignTool do Inno + signtool.exe + certificado .pfx ou token HSM)
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
