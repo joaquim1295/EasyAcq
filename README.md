@@ -1,5 +1,7 @@
 # Aquisição SDM3055 + Dinamómetro
 
+**Repositório:** [github.com/joaquim1295/EasyAcq](https://github.com/joaquim1295/EasyAcq)
+
 Aplicação desktop Python para **Windows 10 (64 bits) e Windows 11** (executável e instalador testados nesse alvo).
 
 - SDM3055 via NI-VISA (pyvisa)

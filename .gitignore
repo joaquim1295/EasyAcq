@@ -24,6 +24,9 @@ data/
 .coverage
 htmlcov/
 
+# Logs locais
+logs/
+
 # IDE / OS
 .idea/
 .vscode/
