@@ -1,0 +1,6 @@
+# Apenas Python 3.13 (desenvolvimento local). NÃO use para PyInstaller / EasyAcq.exe (empacota NumPy 2.x).
+pyvisa==1.14.1
+pyserial==3.5
+numpy>=2.0.2,<2.2
+matplotlib>=3.9.2,<3.11
+pytest==8.2.2

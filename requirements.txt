@@ -1,0 +1,8 @@
+# Runtime — Python 3.11 ou 3.12 (64 bits). NumPy 1.26 evita baseline x86-64-v2 dos wheels NumPy 2.x.
+pyvisa==1.14.1
+pyserial==3.5
+numpy==1.26.4
+matplotlib==3.8.4
+
+# Testes
+pytest==8.2.2

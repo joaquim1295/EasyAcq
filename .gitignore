@@ -1,0 +1,31 @@
+# Virtual environments
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# PyInstaller / local releases
+*.spec.local
+release/
+EasyAcq.lnk
+
+# Logs locais (não versionar)
+logs/
+
+# Tests / tools
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE / OS
+.idea/
+.vscode/
+Thumbs.db
+Desktop.ini
