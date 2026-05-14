@@ -4,7 +4,7 @@
 ; (ou scripts\build_release.ps1 -Installer)
 
 #define MyAppName "EasyAcq"
-#define MyAppVersion "0.2.1"
+#define MyAppVersion "0.2.2"
 #define MyAppPublisher "EasyAcq"
 #define MyAppExeName "EasyAcq.exe"
 #define DistDir "..\\dist\\EasyAcq"

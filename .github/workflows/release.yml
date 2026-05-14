@@ -1,4 +1,4 @@
-# Build Windows bundle on tag push (v*) and attach to GitHub Release.
+# Build Windows (PyInstaller + Inno) ao empurrar tag v*; anexa ZIP e instalador à Release.
 name: Release
 
 on:
@@ -25,7 +25,7 @@ jobs:
           python -m pip install -r requirements.txt -r requirements-build.txt
           python -m pip install --force-reinstall --no-cache-dir "numpy==1.26.4" "matplotlib==3.8.4"
 
-      - name: Verify NumPy 1.26 (no NumPy 2.x no bundle)
+      - name: Verify NumPy 1.26 (bundle compatível com PCs antigos)
         run: python -c "import numpy as np; assert np.__version__.startswith('1.26'), np.__version__"
 
       - name: Tests
@@ -37,22 +37,48 @@ jobs:
       - name: Zip application folder
         shell: pwsh
         run: |
+          if (-not (Test-Path "dist/EasyAcq/EasyAcq.exe")) { throw "dist/EasyAcq/EasyAcq.exe em falta" }
           Compress-Archive -Path "dist/EasyAcq" -DestinationPath "dist/EasyAcq-windows.zip" -Force
 
-      - name: Inno Setup (installer)
-        run: choco install innosetup -y
+      - name: Install Inno Setup (Chocolatey)
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          choco install innosetup -y --no-progress
+          if ($LASTEXITCODE -ne 0) { throw "choco install innosetup falhou com codigo $LASTEXITCODE" }
 
       - name: Compile installer
         shell: pwsh
         run: |
-          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
-          if (-not (Test-Path $iscc)) { $iscc = "$env:ProgramFiles\Inno Setup 6\ISCC.exe" }
+          $candidates = @(
+            "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+            "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+          )
+          $iscc = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) {
+            throw "ISCC.exe nao encontrado. Caminhos testados: $($candidates -join '; '). Confirme 'choco install innosetup'."
+          }
+          Write-Host "Usando ISCC: $iscc"
           New-Item -ItemType Directory -Force release | Out-Null
           & $iscc (Join-Path (Get-Location) "packaging\EasyAcq.iss")
+          if ($LASTEXITCODE -ne 0) { throw "ISCC terminou com codigo $LASTEXITCODE" }
+          Get-ChildItem -Path release -Filter "*.exe" | ForEach-Object { Write-Host "Instalador:" $_.FullName $_.Length "bytes" }
+
+      - name: Verify installer exists
+        shell: pwsh
+        run: |
+          $exes = @(Get-ChildItem -Path release -Filter "*.exe" -ErrorAction SilentlyContinue)
+          if ($exes.Count -lt 1) {
+            Write-Host "Conteudo de release/:"
+            Get-ChildItem release -ErrorAction SilentlyContinue
+            throw "Nenhum .exe em release/ apos Inno."
+          }
 
       - name: Upload release assets
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.6.2
         with:
+          generate_release_notes: true
+          fail_on_unmatched_files: true
           files: |
             dist/EasyAcq-windows.zip
             release/*.exe
