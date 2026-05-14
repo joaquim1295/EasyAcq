@@ -33,38 +33,59 @@ def show_toast(
     title: str,
     message: str,
     *,
-    duration_ms: int = 5000,
+    duration_ms: int = 5500,
 ) -> None:
-    """Mostra um cartão temporário no canto inferior direito do ecrã do parent."""
+    """Cartão temporário no canto inferior direito da janela principal (Tk).
+
+    Em Windows, Toplevel com ``overrideredirect`` precisa de geometria explícita
+    e ``deiconify``/``lift`` depois do layout; caso contrário pode ficar invisível.
+    """
     top = tk.Toplevel(parent)
-    top.overrideredirect(True)
+    top.withdraw()
+    try:
+        top.overrideredirect(True)
+    except tk.TclError:
+        pass
     try:
         top.attributes("-topmost", True)
     except tk.TclError:
         pass
     try:
-        top.attributes("-alpha", 0.94)
+        if sys.platform == "win32":
+            top.attributes("-alpha", 0.96)
     except tk.TclError:
         pass
 
-    frame = ttk.Frame(top, padding=(14, 10))
-    frame.pack(fill="both", expand=True)
-    ttk.Label(frame, text=title, font=("Segoe UI", 10, "bold")).pack(anchor="w")
-    ttk.Label(frame, text=message, wraplength=320, justify="left").pack(anchor="w", pady=(6, 0))
+    outer = ttk.Frame(top, relief="solid", borderwidth=1, padding=(14, 10))
+    outer.pack(fill="both", expand=True)
+    ttk.Label(outer, text=title, font=("Segoe UI", 10, "bold")).pack(anchor="w")
+    ttk.Label(outer, text=message, wraplength=300, justify="left").pack(anchor="w", pady=(6, 0))
 
-    def _place() -> None:
-        parent.update_idletasks()
-        top.update_idletasks()
-        pw = int(parent.winfo_width()) or 800
-        ph = int(parent.winfo_height()) or 600
-        px = int(parent.winfo_rootx())
-        py = int(parent.winfo_rooty())
-        tw = top.winfo_reqwidth()
-        th = top.winfo_reqheight()
-        margin = 16
-        x = px + pw - tw - margin
-        y = py + ph - th - margin
-        top.geometry(f"+{max(px, x)}+{max(py, y)}")
+    def _place_and_show() -> None:
+        try:
+            parent.update_idletasks()
+            top.update_idletasks()
+            pw = max(int(parent.winfo_width()), 240)
+            ph = max(int(parent.winfo_height()), 200)
+            px = int(parent.winfo_rootx())
+            py = int(parent.winfo_rooty())
+            tw = max(int(top.winfo_reqwidth()), 260)
+            th = max(int(top.winfo_reqheight()), 72)
+            margin = 16
+            x = max(px, px + pw - tw - margin)
+            y = max(py, py + ph - th - margin)
+            top.geometry(f"{tw}x{th}+{x}+{y}")
+            top.deiconify()
+            top.lift()
+            try:
+                top.attributes("-topmost", True)
+            except tk.TclError:
+                pass
+        except tk.TclError:
+            try:
+                top.destroy()
+            except tk.TclError:
+                pass
 
-    top.after_idle(_place)
+    top.after(1, _place_and_show)
     top.after(duration_ms, top.destroy)

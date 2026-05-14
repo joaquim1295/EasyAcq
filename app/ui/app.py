@@ -795,9 +795,13 @@ class MainWindow:
                     else "A amostragem terminou (tempo programado)."
                 )
                 self.stop()
-                self.root.after(
-                    80,
-                    lambda m=toast_msg: show_toast(self.root, "EasyAcq — Tempo de aquisição", m),
+                # Depois de stop(): mostrar toast no próximo idle (Windows + overrideredirect).
+                self.root.after_idle(
+                    lambda m=toast_msg: show_toast(
+                        self.root,
+                        "EasyAcq — Tempo de aquisicao",
+                        m,
+                    ),
                 )
 
         if reschedule and self.running:
