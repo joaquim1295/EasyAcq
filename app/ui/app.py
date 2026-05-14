@@ -46,13 +46,7 @@ _ABOUT_TAB_TITLE = "EasyAcq — Aquisição multímetro e dinamómetro"
 _ABOUT_TAB_BODY = """Esta aplicação de bancada integra a aquisição sincronizada de grandezas elétricas (multímetro digital, via NI-VISA) com a medição de força mecânica (dinamómetro, via porta série). Oferece visualização em tempo real, registo estruturado por sessão em CSV e exportação de séries e gráficos para análise e arquivo.
 
 Finalidade e enquadramento
-O software foi desenvolvido para suportar processos internos de controlo de qualidade e caracterização de produtos da Nanopaint, Lda., fornecendo um canal homogéneo de obtenção das medições necessárias a ensaios, verificação de conformidade e elaboração de evidências técnicas. Os dados recolhidos destinam-se a uso disciplinado em testes de qualidade e decisões alinhadas com os requisitos da organização.
-
-Requisitos de sistema
-Destina-se a computadores com **Windows 10 ou Windows 11 (64 bits)**. Em instalações mínimas do Windows, pode ser necessário o **Microsoft Visual C++ Redistributable (x64)** para carregar o runtime empacotado; o multímetro continua a depender do **NI-VISA** instalado.
-
-Nota sobre a versão empacotada (PyInstaller)
-Após a compilação, execute sempre o programa a partir da pasta dist\\EasyAcq\\ (ficheiro EasyAcq.exe junto do conteúdo auxiliar). A pasta build\\ contém apenas artefactos intermédios; não corresponde ao pacote instalável e não deve ser utilizada para execução."""
+O software foi desenvolvido para suportar processos internos de controlo de qualidade e caracterização de produtos da Nanopaint, Lda., fornecendo um canal homogéneo de obtenção das medições necessárias a ensaios, verificação de conformidade e elaboração de evidências técnicas. Os dados recolhidos destinam-se a uso disciplinado em testes de qualidade e decisões alinhadas com os requisitos da organização."""
 
 
 class MainWindow:
