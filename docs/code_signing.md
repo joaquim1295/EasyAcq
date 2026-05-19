@@ -17,13 +17,13 @@ signtool sign /fd sha256 `
   /tr "http://timestamp.digicert.com" /td sha256 `
   /f "C:\segredos\EasyAcq_codesign.pfx" /p "PALAVRA_SECRETA" `
   /d "EasyAcq" `
-  "release\EasyAcq_Setup_0.2.5.exe"
+  "release\EasyAcq_Setup_0.2.6.exe"
 ```
 
 Verifique com:
 
 ```powershell
-signtool verify /pa "release\EasyAcq_Setup_0.2.5.exe"
+signtool verify /pa "release\EasyAcq_Setup_0.2.6.exe"
 ```
 
 ## Integrar com Inno Setup

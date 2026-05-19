@@ -26,6 +26,7 @@ Aplicação **Windows** para **aquisição em bancada**: **multímetro digital**
 - **Valores ao vivo** e **gráficos** (multímetro, dinamómetro e vista integrada opcional).
 - **CSV por sessão** em `data\`, com metadados no cabeçalho.
 - **Exportação** de séries, PNG e registo formatado (opções na aplicação).
+- **Limpar gráficos** após parar (ou exportar) para preparar o próximo ensaio sem sobreposição de dados.
 
 ---
 
@@ -76,5 +77,5 @@ powershell -ExecutionPolicy Bypass -File scripts\build_release.ps1 -Installer
 ## Publicação de versões (mantenedores)
 
 1. Alinhar versão em `app\__version__.py` e `#define MyAppVersion` em `packaging\EasyAcq.iss`.
-2. Criar e enviar tag `v*` (ex.: `v0.2.5`).
+2. Criar e enviar tag `v*` (ex.: `v0.2.6`).
 3. O workflow [.github/workflows/release.yml](.github/workflows/release.yml) executa testes, PyInstaller, gera os BMP do Inno, compila o instalador e anexa **ZIP** e **Setup.exe** à release.

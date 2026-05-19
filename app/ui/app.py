@@ -115,6 +115,13 @@ class MainWindow:
         self.btn_stop.pack(side="left", padx=5)
         self.btn_export = ttk.Button(top, text="Exportar", command=self.export_data)
         self.btn_export.pack(side="left", padx=5)
+        self.btn_clear = ttk.Button(
+            top,
+            text="Limpar gráficos",
+            command=self.clear_charts,
+            state="normal",
+        )
+        self.btn_clear.pack(side="left", padx=5)
 
         self.stats_var = tk.StringVar(value="")
         self._stats_label = ttk.Label(
@@ -489,6 +496,7 @@ class MainWindow:
         self.running = True
         self.btn_start.configure(state="disabled")
         self.btn_stop.configure(state="normal")
+        self.btn_clear.configure(state="disabled")
         self.settings_panel.set_enabled(False)
         self._schedule_poll()
 
@@ -503,7 +511,41 @@ class MainWindow:
         self._session_timer_seconds = None
         self.btn_start.configure(state="normal")
         self.btn_stop.configure(state="disabled")
+        self.btn_clear.configure(state="normal")
         self.settings_panel.set_enabled(True)
+
+    def clear_charts(self) -> None:
+        """Limpa séries dos gráficos e leituras ao vivo (após parar / exportar)."""
+        if self.running:
+            messagebox.showwarning(
+                "Limpar gráficos",
+                "Pare a aquisição antes de limpar os gráficos.",
+            )
+            return
+        had_data = bool(self.dmm_times or self.dyno_times)
+        self._reset_session_display_buffers()
+        if had_data:
+            self._append_log("Gráficos e leituras ao vivo limpos — pronto para novo ensaio.")
+        else:
+            self._append_log("Nada a limpar nos gráficos.")
+
+    def _reset_session_display_buffers(self) -> None:
+        win_s = max(5, int(self.config.chart_window_seconds))
+        cap = win_s * 10
+        self.dmm_times = deque(maxlen=cap)
+        self.dmm_values = deque(maxlen=cap)
+        self.dyno_times = deque(maxlen=cap)
+        self.dyno_values = deque(maxlen=cap)
+        self._dmm_ok_samples = 0
+        self._dyno_ok_samples = 0
+        self._prev_dmm_ok = 0
+        self._prev_dyno_ok = 0
+        self._last_stats_wall = time.monotonic()
+        self._chart_dirty = False
+        self.dmm_reading_var.set("--")
+        self.dyno_reading_var.set("--")
+        self._update_stats_line()
+        self._refresh_plot()
 
     def export_data(self) -> None:
         if not self.dmm_values and not self.dyno_values:
